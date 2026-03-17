@@ -107,11 +107,16 @@ tr:hover td{background:#FFF8F3}
     <select id="fc" onchange="filter()"><option value="">Tous les clients</option></select>
     <select id="fe" onchange="filter()"><option value="">Tous les types d'erreurs</option></select>
     <select id="fm" onchange="filter()"><option value="">Tous les mois</option></select>
+    <select id="fb" onchange="filter()">
+      <option value="">Tous les conteneurs</option>
+      <option value="Oui">Conteneur bloqué</option>
+      <option value="Non">Conteneur non bloqué</option>
+    </select>
     <button id="rb" onclick="reset()">&#10005; Réinitialiser</button>
   </div>
   <div class="kg">
     <div class="kc o"><div class="kl">Nb erreurs</div><div class="kv" id="k1">&#8212;</div><div class="ks" id="k1s"></div></div>
-    <div class="kc r"><div class="kl">Volume perdu (m³)</div><div class="kv" id="k2">&#8212;</div><div class="ks" id="k2s"></div></div>
+    <div class="kc r"><div class="kl">Volume (m³)</div><div class="kv" id="k2">&#8212;</div><div class="ks" id="k2s"></div></div>
     <div class="kc a"><div class="kl">Délai moyen résolution</div><div class="kv" id="k3">&#8212;</div><div class="ks" id="k3s"></div></div>
   </div>
   <div class="cg">
@@ -242,11 +247,13 @@ function initF(){
 
 function filter(){
   var c=document.getElementById('fc').value,e=document.getElementById('fe').value,
-      m=document.getElementById('fm').value,s=document.getElementById('si').value.toLowerCase();
+      m=document.getElementById('fm').value,b=document.getElementById('fb').value,
+      s=document.getElementById('si').value.toLowerCase();
   fd=all.filter(function(d){
     if(c&&d.client!==c)return false;
     if(e&&d.erreur!==e)return false;
     if(m&&!d.dateRec.startsWith(m))return false;
+    if(b&&d.bloque!==b)return false;
     if(s&&!d.client.toLowerCase().includes(s)&&!d.erreur.toLowerCase().includes(s)&&!d.id.toLowerCase().includes(s))return false;
     return true;
   });
@@ -254,7 +261,7 @@ function filter(){
 }
 
 function reset(){
-  ['fc','fe','fm'].forEach(function(id){document.getElementById(id).value='';});
+  ['fc','fe','fm','fb'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('si').value='';filter();
 }
 
@@ -266,7 +273,9 @@ function render(){
   document.getElementById('k2').textContent=vol.toFixed(1)+' m³';
   document.getElementById('k3').textContent=del.toFixed(1)+' j';
   document.getElementById('k1s').textContent='sur '+all.length+' erreurs enregistrées';
-  document.getElementById('k2s').textContent='Moy. '+(n?(vol/n).toFixed(1):0)+' m³ / erreur';
+  var bVal=document.getElementById('fb').value;
+  var volLabel=bVal==='Oui'?'volume bloqué':bVal==='Non'?'volume non bloqué':'volume total';
+  document.getElementById('k2s').textContent='Moy. '+(n?(vol/n).toFixed(1):0)+' m³ / erreur · '+volLabel;
   document.getElementById('k3s').textContent='Max : '+Math.max.apply(null,fd.map(function(d){return d.jours;}).concat([0]))+' j · '+blq+' bloqués';
   document.getElementById('lu').innerHTML='Données : <strong>'+fd.length+'</strong> / <strong>'+all.length+'</strong><br>'+new Date().toLocaleString('fr-FR');
   renderCl();renderEr();renderEv();renderTb();
