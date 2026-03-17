@@ -233,7 +233,7 @@ function initF(){
   var ers=[...new Set(all.map(function(d){return d.erreur;}))].sort();
   var mos=[...new Set(all.map(function(d){return d.dateRec.substring(0,7);}))].sort().filter(function(m){return m.length===7;});
   document.getElementById('fc').innerHTML='<option value="">Tous les clients</option>'+cls.map(function(c){return '<option>'+c+'</option>';}).join('');
-  document.getElementById('fe').innerHTML='<option value="">Tous les types d'erreurs</option>'+ers.map(function(e){return '<option>'+e+'</option>';}).join('');
+  document.getElementById('fe').innerHTML='<option value="">Tous les types d\'erreurs</option>'+ers.map(function(e){return '<option>'+e+'</option>';}).join('');
   document.getElementById('fm').innerHTML='<option value="">Tous les mois</option>'+mos.map(function(m){
     var p=m.split('-'),lbl=new Date(p[0],p[1]-1).toLocaleString('fr-FR',{month:'long',year:'numeric'});
     return '<option value="'+m+'">'+lbl+'</option>';
